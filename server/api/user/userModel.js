@@ -8,7 +8,7 @@ var UserSchema = new Schema({
     required: true,
     unique: true,
   },
-  pass: {
+  password: {
     type: String,
     required: true,
   },
@@ -24,14 +24,18 @@ UserSchema.methods = {
     if (!plainTextPassword) {
       return "";
     } else {
-      //var salt = bcrypt.getSaltSync(10);
-      // return bcrypt.hashSync(plainTextPassword, salt);
-      return "";
+      /**
+       * using bcrypt module that also has salt param to make it more
+       * securure against attacts
+       */
+      var saltRounds = 10;
+      return bcrypt.hashSync(plainTextPassword, saltRounds);
     }
   },
 };
 
 //mongoose middleware that run before document is saved in DB
+//we will use it to encrypte textPassword to hash encrypted
 UserSchema.pre("save", function (next) {
   if (!this.isModified("password")) return next();
   this.password = this.encryptPassword(this.password);

@@ -22,14 +22,15 @@ exports.getFreshUser = function (params) {
 exports.createUser = function () {
   return function (req, res, next) {
     var username = req.body.username;
-    var password = req.body.pass;
+    var password = req.body.password;
     console.log(req.body);
     //if no username or password resolve with...
     if (!username || !password) {
       res.status(400).send("to create user U need username and password!");
     } else {
-      var newUser = { username: username, pass: password };
-      console.log("newUser", newUser);
+      var newUser = { username, password };
+      //mongodb doesnt allow store passwords in plain text for security reason
+      //it has to be encoded
       User.create(newUser).then(
         function (newUser) {
           res.json(newUser);
@@ -52,16 +53,13 @@ exports.verifyUser = function () {
     if (!username || !password) {
       res.status(400).send("U need username and password!");
     } else {
-      User.find().then((users) => {
-        console.log("users", users);
-      });
-      //look in database for the user
-      //test data is: {username:test, password:test } and hosted on: mylab
-      // https://cloud.mongodb.com/v2/5e8eda02f8def942a350ce40#security/database/users
+      //step 3a. --- look in database for the username sent  ----
       User.findOne({ username: username }).then(function (user) {
         if (!user) {
           res.status(401).send("No user with the given username");
         } else {
+          //step 3b. --- autheticate user check if password match by decoding
+          //the server password to text password sent and compare  ----
           if (!user.authenticate(password)) {
             res.status(401).send("Wrong password");
           } else {
@@ -75,9 +73,14 @@ exports.verifyUser = function () {
   };
 };
 
-//not in use at the moment !!
+//jwt module will crate encoded JSON token to us
 exports.signToken = function (id) {
-  return jwt.sign({ _id: id }, config.secrets.jwt, {
-    expiresinMunutes: config.expireTime,
-  });
+  return jwt.sign(
+    {
+      _id: id,
+      //expires in one hour
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    },
+    "secret" //it will default to SHA encoding
+  );
 };
