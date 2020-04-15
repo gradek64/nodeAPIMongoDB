@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var postSchema = new Schema({
+var PostSchema = new Schema({
   title: String, // String is shorthand for {type: String}
   text: String,
   //author is ObjectId reference being referenced in user Collections
@@ -9,4 +9,10 @@ var postSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-module.exports = postSchema;
+PostSchema.pre("save", function (next) {
+  next();
+});
+
+//creates collections Post
+var Post = mongoose.model("Post", PostSchema);
+module.exports = Post;

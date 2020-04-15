@@ -1,4 +1,4 @@
-var PostModel = require("./postModel");
+var Post = require("./postModel");
 //express build-in param middleware
 //in this case will look for api/posts/id
 /**
@@ -10,19 +10,29 @@ var PostModel = require("./postModel");
  */
 
 exports.param = function (req, res, next, id) {
-  PostModel.find(id).then(function (post) {
-    !post
-      ? next(new Error("No post with that id"))
-      : ((req.post = post), next());
-  });
+  Post.findOne({ _id: id }).then(
+    function (post) {
+      console.log("post", post);
+      !post
+        ? next(new Error("No post with that id"))
+        : ((req.post = post), next());
+    },
+    function (err) {
+      res.status(400).json({
+        message: err + "::---id not found in Database---",
+      });
+    }
+  );
 };
 
 //create post
-exports.post = function (req, res, next) {
-  var newPost = req.body;
-  PostModel.create(newPost).then(
+exports.create = function (req, res, next) {
+  var { title, text } = req.body;
+  //user id is sent in red.userID from decoded token in previous middleware
+  var newPost = { title, text, author: req.userID };
+  Post.create(newPost).then(
     function (newpost) {
-      req.json(newpost);
+      res.json(newpost);
     },
     function (err) {
       next(new Error(err));
@@ -32,9 +42,9 @@ exports.post = function (req, res, next) {
 
 //get all posts
 exports.get = function (req, res, next) {
-  PostModel.find().then(
+  Post.find().then(
     function (posts) {
-      req.json(posts);
+      res.json(posts);
     },
     function (err) {
       next(new Error(err));
@@ -45,18 +55,17 @@ exports.get = function (req, res, next) {
 //getOne post
 exports.getOne = function (req, res, next) {
   var post = req.post; //comes from app.param no need to look for one here
-  req.json(post); //no need for error checking either done in app.param
+  res.json(post); //no need for error checking either done in app.param
 };
 
 //update post
 exports.put = function (req, res, next) {
-  var post = req.post; //comes from app.param no need to look for one here
+  var post = req.post; //comes from app.param no need to look for one here from /:id
   var update = req.body; //comes from request
   //mutate post by Object.assign() will mutate original post with update behind the scenes
   Object.assign(post, update);
-
   post.save(function (err, saved) {
-    err ? next(err) : req.json(saved);
+    err ? next(err) : res.json(saved);
   });
 };
 
@@ -64,6 +73,6 @@ exports.put = function (req, res, next) {
 exports.delete = function (req, res, next) {
   var post = req.post; //comes from app.param no need to look for one here
   post.remove(function (err, deletedPost) {
-    err ? next(err) : req.json(deletedPost);
+    err ? next(err) : res.json(deletedPost);
   });
 };

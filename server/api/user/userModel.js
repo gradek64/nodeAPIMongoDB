@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var bcrypt = require("bcrypt");
+var jwt = require("jsonwebtoken");
 
 var UserSchema = new Schema({
   username: {
@@ -18,6 +19,12 @@ var UserSchema = new Schema({
 UserSchema.methods = {
   authenticate: function (plainTextPassword) {
     return bcrypt.compareSync(plainTextPassword, this.password);
+  },
+  isAuthenticated: function (token) {
+    return jwt.verify(
+      token,
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk3MTRjZWYzYmIxZjM1ZGFkODNlNTAiLCJleHAiOjE1ODY5NjM0NzcsImlhdCI6MTU4Njk1OTg3N30.ALmza3NXlCVds33NaavRsa5qPR_ZCtjtaACD4WS6aAk"
+    );
   },
   //hash the password
   encryptPassword: function (plainTextPassword) {
