@@ -13,6 +13,6 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
-//creates collections Post
+//creates collection Post mongoDB wil converts to posts
 var Post = mongoose.model("Post", PostSchema);
 module.exports = Post;

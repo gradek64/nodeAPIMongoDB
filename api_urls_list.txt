@@ -1,0 +1,13 @@
+users 
+POST AUTH domain/api/users/create 
+POST AUTH domain/api/users/signin 
+GET NO AUTH domain/api/users/
+GET NO AUTH domain/api/users/id 
+PUT AUTH domain/api/users/id 
+DELETE AUTH domain/api/users/id 
+posts
+POST AUTH domain/api/posts/create  
+GET AUTH domain/api/posts
+GET AUTH domain/api/posts/id 
+PUT AUTH domain/api/posts/id 
+DELETE AUTH domain/api/posts/id 

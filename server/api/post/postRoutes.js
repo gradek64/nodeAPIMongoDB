@@ -12,7 +12,7 @@ var auth = require("../../middleware/auth");
 //checkUser = [auth.decodeUserToken(), auth.getCurrentUser()];
 var authenticate = [auth.decodeUserToken()];
 
-//check this middleware for id params before U get to "/:id"
+//express middleware for id params before U get to "/:id"
 extendedRouter.param("id", controller.param);
 //api/posts
 extendedRouter.route("/").get(authenticate, controller.get); //get user posts

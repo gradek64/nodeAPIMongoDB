@@ -8,7 +8,7 @@ var Post = require("./postModel");
  * that way if we execute app.getOne() then we already have post id sorted and found in app.param
  * it saves time to look for id in every single request app.param will find it first for us !
  */
-
+//get id for all using /:id authorized
 exports.param = function (req, res, next, id) {
   Post.findOne({ _id: id }).then(
     function (post) {
@@ -25,7 +25,7 @@ exports.param = function (req, res, next, id) {
   );
 };
 
-//create post
+//create post api/posts/create authorized
 exports.create = function (req, res, next) {
   var { title, text } = req.body;
   //user id is sent in red.userID from decoded token in previous middleware
@@ -40,7 +40,7 @@ exports.create = function (req, res, next) {
   );
 };
 
-//get all posts
+//get all posts : api/posts authorized
 exports.get = function (req, res, next) {
   Post.find().then(
     function (posts) {
@@ -52,13 +52,13 @@ exports.get = function (req, res, next) {
   );
 };
 
-//getOne post
+//getOne post api/posts/:id authorized
 exports.getOne = function (req, res, next) {
   var post = req.post; //comes from app.param no need to look for one here
   res.json(post); //no need for error checking either done in app.param
 };
 
-//update post
+//update post api/posts/:id authorized
 exports.put = function (req, res, next) {
   var post = req.post; //comes from app.param no need to look for one here from /:id
   var update = req.body; //comes from request
@@ -69,7 +69,7 @@ exports.put = function (req, res, next) {
   });
 };
 
-//delete post
+//delete post api/posts/:id authorized
 exports.delete = function (req, res, next) {
   var post = req.post; //comes from app.param no need to look for one here
   post.remove(function (err, deletedPost) {

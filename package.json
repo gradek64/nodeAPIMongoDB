@@ -4,8 +4,7 @@
   "description": "rest api build",
   "main": "index.js",
   "scripts": {
-    "test": "test",
-    "prod": "node index.js",
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [

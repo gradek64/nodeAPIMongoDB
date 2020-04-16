@@ -8,7 +8,6 @@ var User = require("./userModel");
 
 //express build-in param middleware
 //in this case will look for api/users/id
-
 exports.param = function (req, res, next, id) {
   User.findOne({ _id: id }).then(
     function (user) {
@@ -24,10 +23,10 @@ exports.param = function (req, res, next, id) {
   );
 };
 
-//create new user
+//create new user : api/users/create authorized
 exports.create = function (req, res, next) {
   var newUser = req.body;
-  User.create(user).then(
+  User.create(newUser).then(
     function (user) {
       res.json(user);
     },
@@ -37,7 +36,7 @@ exports.create = function (req, res, next) {
   );
 };
 
-//get all users
+//get all users api/users/ no authorized
 exports.get = function (req, res, next) {
   User.find().then(
     function (users) {
@@ -49,14 +48,14 @@ exports.get = function (req, res, next) {
   );
 };
 
-//getOne user
+//getOne user : api/users/:id  no authorized
 //if we execute app.getOne() then we already have post id sorted and found in app.param
 exports.getOne = function (req, res, next) {
   var user = req.user; //comes from app.param no need to look for one here
   res.json(user); //no need for error checking either done in app.param
 };
 
-//update user
+//update user : api/users/:id authorized
 exports.update = function (req, res, next) {
   var user = req.user; //comes from app.param no need to look for one here
   var update = req.body; //comes from request
@@ -69,7 +68,7 @@ exports.update = function (req, res, next) {
   });
 };
 
-//delete user
+//delete user api/users/:id authorized
 exports.delete = function (req, res, next) {
   var user = req.user; //comes from app.param no need to look for one here
   user.remove(function (err, deletedUser) {

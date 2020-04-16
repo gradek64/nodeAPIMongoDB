@@ -27,8 +27,7 @@ exports.validateCreateUser = function () {
       : next();
   };
 };
-//step 3.
-//middlware that makes all operations/validation to get token to the client
+
 exports.verifyUser = function () {
   return function (req, res, next) {
     var { username, password } = req.body;
@@ -37,11 +36,11 @@ exports.verifyUser = function () {
     if (!username || !password) {
       return res.status(400).send("U need username or password!");
     } else {
-      //step 3a. --- look in database for the username sent  ----
+      //find user based on unique set field username
       User.findOne({ username: username }).then(function (user) {
         if (!user) {
           return res.status(401).json({
-            message: "not verified once",
+            message: "no user",
           });
         } else {
           if (!user.authenticate(password)) {
@@ -53,6 +52,7 @@ exports.verifyUser = function () {
             jwt.sign(
               //payload sent check in https://jwt.io/
               {
+                //keep user id for passing it to post create
                 _user: user._id,
                 //expires in one hour
                 exp: Math.floor(Date.now() / 1000) + 60 * 60,
