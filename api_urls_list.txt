@@ -1,13 +1,13 @@
 users 
-POST AUTH domain/api/users/create 
-POST AUTH domain/api/users/signin 
+POST NO AUTH domain/api/users/create body {username,password}:any 
+POST NO AUTH domain/api/users/signin  body {username, password }:valid
 GET NO AUTH domain/api/users/
-GET NO AUTH domain/api/users/id 
-PUT AUTH domain/api/users/id 
-DELETE AUTH domain/api/users/id 
+GET NO AUTH domain/api/users/id needs /id from user object 
+PUT AUTH domain/api/users/id needs /id from user object and body {username?} header.authorizaton.token from domain/api/users/signin
+DELETE AUTH domain/api/users/id  id from the user object and  header.authorizaton.token from domain/api/users/signin
 posts
-POST AUTH domain/api/posts/create  
-GET AUTH domain/api/posts
-GET AUTH domain/api/posts/id 
-PUT AUTH domain/api/posts/id 
-DELETE AUTH domain/api/posts/id 
+POST AUTH domain/api/posts/create  body {title,text} and header.authorizaton.token from domain/api/users/signin
+GET AUTH domain/api/posts   header.authorizaton.token from domain/api/users/signin
+GET AUTH domain/api/posts/id  needs id from post id and header.authorizaton.token from domain/api/users/signin
+PUT AUTH domain/api/posts/id  id from post id and body {title?,text?} and  header.authorizaton.token from domain/api/users/signin
+DELETE AUTH domain/api/posts/id id from post id and  header.authorizaton.token from domain/api/users/signin

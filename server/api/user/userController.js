@@ -1,4 +1,4 @@
-var User = require("./userModel");
+var User = require('./userModel');
 
 //middlware
 
@@ -12,18 +12,18 @@ exports.param = function (req, res, next, id) {
   User.findOne({ _id: id }).then(
     function (user) {
       !user
-        ? next(new Error("No user with that id"))
+        ? next(new Error('No user with that id'))
         : ((req.user = user), next());
     },
     function (err) {
       res.status(400).json({
-        message: err + "::---id not found in Database---",
+        message: err + '::---id not found in Database---',
       });
     }
   );
 };
 
-//create new user : api/users/create authorized
+//create new user : api/users/create no authorized
 exports.create = function (req, res, next) {
   var newUser = req.body;
   User.create(newUser).then(
@@ -61,9 +61,9 @@ exports.update = function (req, res, next) {
   var update = req.body; //comes from request
   //mutate post by Object.assign() will mutate original post with update behind the scenes
   Object.assign(user, update);
-  console.log("user,", user);
+  console.log('user,', user);
   user.save(function (err, saved) {
-    console.log("saved", saved);
+    console.log('saved', saved);
     err ? next(err) : res.json(saved);
   });
 };
